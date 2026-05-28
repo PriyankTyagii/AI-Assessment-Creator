@@ -7,6 +7,9 @@ import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
 export const metadata: Metadata = {
   title: 'VedaAI — Assessment Creator',
   description: 'AI-powered exam paper generator for teachers',
+  icons: {
+    icon: '/icon.svg',
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
