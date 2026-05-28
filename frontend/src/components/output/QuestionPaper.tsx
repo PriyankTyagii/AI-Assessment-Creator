@@ -23,7 +23,7 @@ export function QuestionPaper({ result, printRef }: Props) {
     >
       {/* Header */}
       <div className="text-center mb-5">
-        <h1 className="text-xl font-bold text-gray-900">Delhi Public School, Sector-4, Bokaro</h1>
+        <h1 className="text-xl font-bold text-gray-900">{metadata.title}</h1>
         <p className="font-semibold text-gray-800 mt-1">Subject: {metadata.subject}</p>
         {metadata.className && (
           <p className="font-semibold text-gray-800">Class: {metadata.className}</p>
