@@ -1,6 +1,6 @@
 # AI Assessment Creator
 
-An AI-powered exam paper generator built for teachers. A teacher fills a form (subject, class, question types, marks, difficulty), the system queues a background job, calls the Groq API, and delivers a fully structured, exam-ready question paper with real-time progress updates and PDF download.
+An AI-powered exam paper generator built for teachers. A teacher fills a form (subject, class, question types, marks, difficulty), the system queues a background job, calls the Groq API, and delivers a fully structured, exam-ready question paper with real-time progress updates and PDF download..
 
 ---
 
