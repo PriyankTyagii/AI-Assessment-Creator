@@ -124,11 +124,22 @@ function CardMenu({ assignmentId, onView, onDelete }: CardMenuProps) {
   );
 }
 
+const STATUS_OPTIONS = [
+  { label: 'All', value: '' },
+  { label: 'Completed', value: 'completed' },
+  { label: 'Processing', value: 'processing' },
+  { label: 'Pending', value: 'pending' },
+  { label: 'Failed', value: 'failed' },
+];
+
 export default function HomePage() {
   const router = useRouter();
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
+  const [filterOpen, setFilterOpen] = useState(false);
+  const filterRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     listAssignments()
@@ -137,9 +148,21 @@ export default function HomePage() {
       .finally(() => setLoading(false));
   }, []);
 
-  const filtered = assignments.filter((a) =>
-    a.title.toLowerCase().includes(search.toLowerCase())
-  );
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (filterRef.current && !filterRef.current.contains(e.target as Node)) {
+        setFilterOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, []);
+
+  const filtered = assignments.filter((a) => {
+    const matchesSearch = a.title.toLowerCase().includes(search.toLowerCase());
+    const matchesStatus = statusFilter === '' || a.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
 
   if (loading) {
     return (
@@ -166,10 +189,36 @@ export default function HomePage() {
         <>
           {/* Filter + Search */}
           <div className="flex items-center justify-between gap-4 mb-5">
-            <button className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition-colors bg-white rounded-full px-4 py-2 border border-gray-200 shadow-sm">
-              <Filter className="w-3.5 h-3.5" />
-              Filter By
-            </button>
+            <div ref={filterRef} className="relative">
+              <button
+                onClick={() => setFilterOpen((o) => !o)}
+                className={clsx(
+                  'flex items-center gap-2 text-sm transition-colors bg-white rounded-full px-4 py-2 border shadow-sm',
+                  statusFilter
+                    ? 'text-gray-900 border-gray-400 font-medium'
+                    : 'text-gray-600 hover:text-gray-900 border-gray-200'
+                )}
+              >
+                <Filter className="w-3.5 h-3.5" />
+                {statusFilter ? STATUS_OPTIONS.find((o) => o.value === statusFilter)?.label : 'Filter By'}
+              </button>
+              {filterOpen && (
+                <div className="absolute left-0 top-10 z-20 bg-white rounded-xl shadow-lg border border-gray-100 py-1 min-w-[150px]">
+                  {STATUS_OPTIONS.map((opt) => (
+                    <button
+                      key={opt.value}
+                      onClick={() => { setStatusFilter(opt.value); setFilterOpen(false); }}
+                      className={clsx(
+                        'w-full text-left px-4 py-2.5 text-sm transition-colors hover:bg-gray-50',
+                        statusFilter === opt.value ? 'text-gray-900 font-semibold' : 'text-gray-600'
+                      )}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
               <input
