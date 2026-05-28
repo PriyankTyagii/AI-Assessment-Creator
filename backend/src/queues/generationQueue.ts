@@ -4,7 +4,11 @@ import { GenerationJobData } from '../types/index.js';
 function getRedisConnection() {
   const url = process.env.REDIS_URL || 'redis://localhost:6379';
   const parsed = new URL(url);
-  return { host: parsed.hostname, port: parseInt(parsed.port || '6379', 10) };
+  return {
+    host: parsed.hostname,
+    port: parseInt(parsed.port || '6379', 10),
+    ...(parsed.password && { password: decodeURIComponent(parsed.password) }),
+  };
 }
 
 export const generationQueue = new Queue<GenerationJobData, void, string>('generation', {
